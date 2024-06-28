@@ -38,20 +38,14 @@ function DMA-Einrichten {
         
         Set-Location -Path $projectRoot2
         Start-Process powershell -ArgumentList "docker network create web" -NoNewWindow -Wait
-        Start-Process powershell -ArgumentList "yarn dev:backend:start"
 
-        Start-Sleep -Seconds 20  # Wait for the backend container to start
-
-        # Run migrations inside the backend container
-          Start-Process powershell -ArgumentList "docker exec dma-backend-dev composer install" -NoNewWindow -Wait
-        Start-Process powershell -ArgumentList "docker exec dma-backend-dev php yii migrate-kernel --interactive=0" -NoNewWindow -Wait
-        Start-Process powershell -ArgumentList "docker exec dma-backend-dev php yii migrate-app --interactive=0" -NoNewWindow -Wait
 
         Set-Location -Path $uiPath
         Start-Process powershell -ArgumentList "yarn dev:ui:install" -NoNewWindow -Wait
         Start-Process powershell -ArgumentList "yarn dev:ui:start" -NoNewWindow -Wait
 
         Write-Host "DMA environment setup completed successfully. Open http://localhost:8080/ to access the application."
+        Set-Location -Path $projectRoot
     } catch {
         Write-Host "Error setting environment variables: $_"
         Pause
