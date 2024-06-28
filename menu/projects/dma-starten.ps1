@@ -16,6 +16,9 @@ function DMA-Starten {
 
         # Start the backend in a new PowerShell process
         Start-Process powershell -ArgumentList "yarn run dev:backend:start"
+          Start-Process powershell -ArgumentList "docker exec dma-backend-dev composer install" -NoNewWindow -Wait
+        Start-Process powershell -ArgumentList "docker exec dma-backend-dev php yii migrate-kernel --interactive=0" -NoNewWindow -Wait
+        Start-Process powershell -ArgumentList "docker exec dma-backend-dev php yii migrate-app --interactive=0" -NoNewWindow -Wait
 
         # Change directory to UI path and start the UI
         Set-Location -Path $uiPath
