@@ -1,6 +1,38 @@
 # Set script to stop on any error
 $ErrorActionPreference = "Stop"
 
+function Show-ProgressBar {
+    param (
+        [string]$message,
+        [int]$delaySeconds = 10
+    )
+    $progress = 0
+    $increment = 100 / $delaySeconds
+    Write-Host $message
+    for ($i = 0; $i -lt $delaySeconds; $i++) {
+        Write-Progress -Activity $message -PercentComplete $progress
+        Start-Sleep -Seconds 1
+        $progress += $increment
+    }
+    Write-Progress -Activity $message -Completed
+}
+
+function Show-LoadingAnimation {
+    param (
+        [string]$message,
+        [int]$durationSeconds = 10
+    )
+    $animation = ("|", "/", "-", "\")
+    $i = 0
+    $end = [DateTime]::Now.AddSeconds($durationSeconds)
+    while ([DateTime]::Now -lt $end) {
+        Write-Host -NoNewline "`r$message $($animation[$i % $animation.Length])"
+        Start-Sleep -Milliseconds 200
+        $i++
+    }
+    Write-Host "`r$message done."
+}
+
 function Add-ToPath {
     param (
         [string]$newPath
@@ -77,7 +109,6 @@ function Install-PHP {
         Expand-Archive -Path $zipPath -DestinationPath $installPath -Force
         Remove-Item $zipPath
         Add-ToPath -newPath "$installPath"
-        Copy-Item -Path "$installPath\php.ini-development" -Destination "$installPath\php.ini"
         Write-Host "PHP $phpVersion installation completed successfully!"
     } catch {
         Write-Host "Failed to extract PHP zip file. Error: $_"
@@ -87,7 +118,6 @@ function Install-PHP {
     $installedVersion = Get-CommandVersion -command "php" -versionArg "-v"
     if ($installedVersion -and $installedVersion -match $phpVersion) {
         Write-Host "PHP $phpVersion has been installed successfully."
-        Enable-PHPExtensions -installPath $installPath
     } else {
         Write-Host "Failed to install PHP $phpVersion."
     }
@@ -140,37 +170,10 @@ function InstallPluginsOnly {
     }
 }
 
-function ShowMainMenu {
-    Write-Host "Select an option to install:"
-    Write-Host "1. Install PHP"
-    Write-Host "2. Install Composer"
-    Write-Host "3. Install Node.js via nvm"
-    Write-Host "4. Install npm"
-    Write-Host "5. Install pnpm"
-    Write-Host "6. Install Yarn"
-    Write-Host "7. Install Git"
-    Write-Host "8. Install Docker"
-    Write-Host "9. Projekt Aufsetzen"
-    Write-Host "10. Software Status"
-    Write-Host "11. Install only plugins"
-    Write-Host "12. Exit"
-}
-
-while ($true) {
-    ShowMainMenu
-    $choice = Read-Host "Enter your choice (1-12)"
-    switch ($choice) {
-        1 {
-            Show-PHPVersions
-            $phpChoice = Read-Host "Enter your choice or 'menu' to return to the main menu"
-            if ($phpChoice -ne 'menu' -and $phpVersions.ContainsKey($phpChoice)) {
-                Install-PHP -phpVersion $phpChoice -phpUrl $phpVersions[$phpChoice]
-            }
-        }
-        11 {
-            InstallPluginsOnly
-        }
-        12 { break }
-        default { Write-Host "Invalid choice. Please try again." }
-    }
+Show-PHPVersions
+$phpChoice = Read-Host "Enter your choice (install php/version or 'menu' to return to the main menu, or 'plugins' to install only plugins)"
+if ($phpChoice -eq 'plugins') {
+    InstallPluginsOnly
+} elseif ($phpChoice -ne 'menu' -and $phpVersions.ContainsKey($phpChoice)) {
+    Install-PHP -phpVersion $phpChoice -phpUrl $phpVersions[$phpChoice]
 }
