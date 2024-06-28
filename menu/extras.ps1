@@ -34,29 +34,17 @@ function Composer-ClearCache {
 # Function to set up SSH for Git
 function Setup-SSHForGit {
     try {
-        $email = Read-Host "Enter your email address for the SSH key"
-        $keyPath = "$env:USERPROFILE\.ssh\id_rsa"
-
         # Generate a new SSH key
-        ssh-keygen -t rsa -b 4096 -C $email -f $keyPath -N ""
+        ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
         
-        Write-Host "SSH key generated."
-
-        # Display instructions for adding the SSH key to GitHub
-        Write-Host ""
-        Write-Host "Please follow these steps to add your SSH key to your GitHub account:"
-        Write-Host "1. Copy the SSH key to your clipboard by running the following command:"
-        Write-Host "   Get-Content $keyPath.pub | clip"
-        Write-Host "2. Go to GitHub and log in."
-        Write-Host "3. In the upper-right corner of any page, click your profile photo, then click Settings."
-        Write-Host "4. In the user settings sidebar, click SSH and GPG keys."
-        Write-Host "5. Click New SSH key."
-        Write-Host "6. In the 'Title' field, add a descriptive label for the new key."
-        Write-Host "7. Paste your key into the 'Key' field."
-        Write-Host "8. Click Add SSH key."
-        Write-Host ""
-        Write-Host "Your public key:"
-        Get-Content $keyPath.pub
+        # Start the ssh-agent in the background
+        eval $(ssh-agent -s)
+        
+        # Add the SSH key to the ssh-agent
+        ssh-add ~/.ssh/id_rsa
+        
+        Write-Host "SSH key generated and added to ssh-agent. Please add the following public key to your GitHub account:"
+        type ~/.ssh/id_rsa.pub
     } catch {
         Write-Host "Failed to set up SSH for Git. Error: $_"
     }
