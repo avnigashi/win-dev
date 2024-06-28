@@ -151,7 +151,7 @@ function Enable-PHPExtensions {
     )
 
     foreach ($extension in $extensions) {
-        $iniContent = $iniContent -replace ";\s*$extension", "$extension"
+        $iniContent = $iniContent -replace ";\s*($extension)", '$1'
         if ($iniContent -notmatch [regex]::Escape($extension)) {
             $iniContent += "`n$extension"
         }
