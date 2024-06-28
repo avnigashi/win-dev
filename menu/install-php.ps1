@@ -102,6 +102,11 @@ function Enable-PHPExtensions {
         return
     }
 
+    # Set the extension directory
+    $extensionDir = "$installPath\ext"
+    $iniContent = Get-Content -Path $iniPath
+    $iniContent = $iniContent -replace ";\s*extension_dir\s*=\s*\"ext\"", "extension_dir = `"$extensionDir`""
+
     $extensions = @(
         "extension=curl",
         "extension=gd",
@@ -112,7 +117,6 @@ function Enable-PHPExtensions {
         "extension=xml"
     )
 
-    $iniContent = Get-Content -Path $iniPath
     foreach ($extension in $extensions) {
         $iniContent = $iniContent -replace ";\s*$extension", "$extension"
         if ($iniContent -notmatch [regex]::Escape($extension)) {
