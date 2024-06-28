@@ -38,9 +38,9 @@ function DMA-Einrichten {
         
         Set-Location -Path $projectRoot2
         Start-Process powershell -ArgumentList "docker network create web" -NoNewWindow -Wait
-        Start-Process powershell -ArgumentList "yarn dev:backend:start"  -Wait
+        Start-Process powershell -ArgumentList "yarn dev:backend:start"
 
-        Start-Sleep -Seconds 10  # Wait for the backend container to start
+        Start-Sleep -Seconds 20  # Wait for the backend container to start
 
         # Run migrations inside the backend container
           Start-Process powershell -ArgumentList "docker exec dma-backend-dev composer install" -NoNewWindow -Wait
