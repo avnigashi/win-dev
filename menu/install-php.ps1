@@ -121,15 +121,41 @@ function Enable-PHPExtensions {
     foreach ($extension in $extensions) {
         $iniContent = $iniContent -replace ";\s*$extension", "$extension"
         if ($iniContent -notmatch [regex]::Escape($extension)) {
-            Add-Content -Path $iniPath -Value "`n$extension"
+            $iniContent += "`n$extension"
         }
     }
     Set-Content -Path $iniPath -Value $iniContent
     Write-Host "Enabled common PHP extensions in php.ini."
 }
 
-Show-PHPVersions
-$phpChoice = Read-Host "Enter your choice or 'menu' to return to the main menu"
-if ($phpChoice -ne 'menu' -and $phpVersions.ContainsKey($phpChoice)) {
-    Install-PHP -phpVersion $phpChoice -phpUrl $phpVersions[$phpChoice]
+function ShowMenu {
+    Write-Host "Select an option to install:"
+    Write-Host "1. Install PHP"
+    Write-Host "2. Install Composer"
+    Write-Host "3. Install Node.js via nvm"
+    Write-Host "4. Install npm"
+    Write-Host "5. Install pnpm"
+    Write-Host "6. Install Yarn"
+    Write-Host "7. Install Git"
+    Write-Host "8. Install Docker"
+    Write-Host "9. Projekt Aufsetzen"
+    Write-Host "10. Software Status"
+    Write-Host "11. Extras"
+    Write-Host "12. Exit"
+}
+
+while ($true) {
+    ShowMenu
+    $choice = Read-Host "Enter your choice (1-12)"
+    switch ($choice) {
+        1 {
+            Show-PHPVersions
+            $phpChoice = Read-Host "Enter your choice or 'menu' to return to the main menu"
+            if ($phpChoice -ne 'menu' -and $phpVersions.ContainsKey($phpChoice)) {
+                Install-PHP -phpVersion $phpChoice -phpUrl $phpVersions[$phpChoice]
+            }
+        }
+        12 { break }
+        default { Write-Host "Invalid choice. Please try again." }
+    }
 }
