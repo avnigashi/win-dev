@@ -106,7 +106,7 @@ function Enable-PHPExtensions {
     # Set the extension directory
     $extensionDir = "$installPath\ext"
     $iniContent = Get-Content -Path $iniPath
-    $iniContent = $iniContent -replace ";\s*extension_dir\s*=\s*\""ext\""", "extension_dir = `"$extensionDir`""
+    $iniContent = $iniContent -replace ";\s*extension_dir\s*=\s*\"ext\"", "extension_dir = `"$extensionDir`""
 
     $extensions = @(
         "extension=curl",
@@ -115,7 +115,8 @@ function Enable-PHPExtensions {
         "extension=mysqli",
         "extension=openssl",
         "extension=pdo_mysql",
-        "extension=xml"
+        "extension=xml",
+        "extension=zip"
     )
 
     foreach ($extension in $extensions) {
@@ -128,7 +129,18 @@ function Enable-PHPExtensions {
     Write-Host "Enabled common PHP extensions in php.ini."
 }
 
-function ShowMenu {
+function InstallPluginsOnly {
+    $phpPath = Get-Command "php" | Select-Object -ExpandProperty Source
+    if ($phpPath) {
+        $phpPath = Split-Path $phpPath
+        Write-Host "PHP installation found at: $phpPath"
+        Enable-PHPExtensions -installPath $phpPath
+    } else {
+        Write-Host "PHP is not installed or not found in the system PATH."
+    }
+}
+
+function ShowMainMenu {
     Write-Host "Select an option to install:"
     Write-Host "1. Install PHP"
     Write-Host "2. Install Composer"
@@ -140,12 +152,12 @@ function ShowMenu {
     Write-Host "8. Install Docker"
     Write-Host "9. Projekt Aufsetzen"
     Write-Host "10. Software Status"
-    Write-Host "11. Extras"
+    Write-Host "11. Install only plugins"
     Write-Host "12. Exit"
 }
 
 while ($true) {
-    ShowMenu
+    ShowMainMenu
     $choice = Read-Host "Enter your choice (1-12)"
     switch ($choice) {
         1 {
@@ -154,6 +166,9 @@ while ($true) {
             if ($phpChoice -ne 'menu' -and $phpVersions.ContainsKey($phpChoice)) {
                 Install-PHP -phpVersion $phpChoice -phpUrl $phpVersions[$phpChoice]
             }
+        }
+        11 {
+            InstallPluginsOnly
         }
         12 { break }
         default { Write-Host "Invalid choice. Please try again." }
