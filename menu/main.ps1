@@ -62,12 +62,64 @@ function Invoke-ScriptFromURL {
     }
 }
 
+# Function to enable PHP extensions in php.ini
+function Enable-PHPExtensions {
+    param (
+        [string]$installPath
+    )
+    $iniPath = "$installPath\php.ini"
+    if (-Not (Test-Path $iniPath)) {
+        Write-Host "php.ini not found at $installPath. Aborting."
+        return
+    }
+
+    # Set the extension directory
+    $extensionDir = "$installPath\ext"
+    $iniContent = Get-Content -Path $iniPath
+    $iniContent = $iniContent -replace ";\s*extension_dir\s*=\s*\"ext\"", "extension_dir = `"$extensionDir`""
+
+    $extensions = @(
+        "extension=curl",
+        "extension=gd",
+        "extension=mbstring",
+        "extension=mysqli",
+        "extension=openssl",
+        "extension=pdo_mysql",
+        "extension=xml",
+        "extension=zip"
+    )
+
+    foreach ($extension in $extensions) {
+        $iniContent = $iniContent -replace ";\s*$extension", "$extension"
+        if ($iniContent -notmatch [regex]::Escape($extension)) {
+            $iniContent += "`n$extension"
+        }
+    }
+    Set-Content -Path $iniPath -Value $iniContent
+    Write-Host "Enabled common PHP extensions in php.ini."
+}
+
+# Function to install only plugins
+function InstallPluginsOnly {
+    $phpPath = Get-Command "php" | Select-Object -ExpandProperty Source
+    if ($phpPath) {
+        $phpPath = Split-Path $phpPath
+        Write-Host "PHP installation found at: $phpPath"
+        Enable-PHPExtensions -installPath $phpPath
+    } else {
+        Write-Host "PHP is not installed or not found in the system PATH."
+    }
+}
+
 # Main script logic
 try {
     Set-ExecutionPolicy-RemoteSigned
 
     $menuURL = "https://raw.githubusercontent.com/avnigashi/win-dev/main/menu/main.json"
     $menu = Load-MenuFromGitHub -url $menuURL
+
+    # Adding "Install only plugins" option to the menu
+    $menu += [pscustomobject]@{ name = "Install only plugins"; url = "" }
 
     while ($true) {
         Show-Menu -menu $menu
@@ -76,8 +128,11 @@ try {
             $selectedMenu = $menu[$choice - 1]
             if ($selectedMenu.name -eq "Exit") {
                 break
+            } elseif ($selectedMenu.name -eq "Install only plugins") {
+                InstallPluginsOnly
+            } else {
+                Invoke-ScriptFromURL -url $selectedMenu.url
             }
-            Invoke-ScriptFromURL -url $selectedMenu.url
             Pause
         } else {
             Write-Host "Invalid choice. Please try again."
