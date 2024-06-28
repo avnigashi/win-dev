@@ -38,7 +38,7 @@ function DMA-Einrichten {
         
         Set-Location -Path $projectRoot2
         Start-Process powershell -ArgumentList "docker network create web" -NoNewWindow -Wait
-        Start-Process powershell -ArgumentList "yarn dev:backend:start" -NoNewWindow -Wait
+        Start-Process powershell -ArgumentList "yarn dev:backend:start"  -Wait
 
         Start-Sleep -Seconds 10  # Wait for the backend container to start
 
