@@ -33,8 +33,8 @@ function DMA-Einrichten {
 
         Set-Location -Path (Join-Path -Path $projectRoot2 -ChildPath "dev-ops")
         Start-Process powershell -ArgumentList "yarn run dma:build" -NoNewWindow -Wait
-        Start-Process powershell -ArgumentList "yarn run docker:build:cds" -NoNewWindow -Wait
-        Start-Process powershell -ArgumentList "yarn run docker:build:dma" -NoNewWindow -Wait
+        Start-Process powershell -ArgumentList "yarn run docker:build:cds" 
+        Start-Process powershell -ArgumentList "yarn run docker:build:dma" 
         
         Set-Location -Path $projectRoot2
         Start-Process powershell -ArgumentList "docker network create web" -NoNewWindow -Wait
