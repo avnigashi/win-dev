@@ -43,6 +43,7 @@ function DMA-Einrichten {
         Start-Sleep -Seconds 10  # Wait for the backend container to start
 
         # Run migrations inside the backend container
+          Start-Process powershell -ArgumentList "docker exec dma-backend-dev composer install" -NoNewWindow -Wait
         Start-Process powershell -ArgumentList "docker exec dma-backend-dev php yii migrate-kernel --interactive=0" -NoNewWindow -Wait
         Start-Process powershell -ArgumentList "docker exec dma-backend-dev php yii migrate-app --interactive=0" -NoNewWindow -Wait
 
