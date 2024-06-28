@@ -40,8 +40,12 @@ function Setup-SSHForGit {
         # Generate a new SSH key
         ssh-keygen -t rsa -b 4096 -C $email -f $keyPath -N ""
         
-        # Start the ssh-agent in the background
-        eval $(ssh-agent -s)
+        # Start the ssh-agent service
+        if (-not (Get-Service ssh-agent -ErrorAction SilentlyContinue)) {
+            Write-Host "SSH agent service not found, attempting to start."
+            Start-Service ssh-agent
+            Set-Service -Name ssh-agent -StartupType Automatic
+        }
         
         # Add the SSH key to the ssh-agent
         ssh-add $keyPath
@@ -50,7 +54,7 @@ function Setup-SSHForGit {
         Write-Host "SSH key generated and added to ssh-agent."
         Write-Host ""
         Write-Host "Please follow these steps to add your SSH key to your GitHub account:"
-        Write-Host "1. Copy the SSH key to your clipboard:"
+        Write-Host "1. Copy the SSH key to your clipboard by running the following command:"
         Write-Host "   Get-Content $keyPath.pub | clip"
         Write-Host "2. Go to GitHub and log in."
         Write-Host "3. In the upper-right corner of any page, click your profile photo, then click Settings."
