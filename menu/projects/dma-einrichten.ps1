@@ -26,19 +26,31 @@ function DMA-Einrichten {
 
         Set-Location -Path $projectRoot2
         
-        Start-Process powershell -ArgumentList "yarn install" 
+        Start-Process powershell -ArgumentList "yarn install" -NoNewWindow -Wait
 
         Set-Location -Path $uiPath
-        Start-Process powershell -ArgumentList "yarn install" 
- 
-        Set-Location -Path $projectRoot2
-        Set-Location -Path (Join-Path -Path $projectRoot2 -ChildPath "dev-ops")
-        Start-Process powershell -ArgumentList "yarn run dma:build" 
-        Start-Process powershell -ArgumentList "yarn run docker:build:cds" 
-        Start-Process powershell -ArgumentList "yarn run docker:build:dma" 
-        Set-Location -Path $projectRoot
+        Start-Process powershell -ArgumentList "yarn install" -NoNewWindow -Wait
 
-        Write-Host "DMA environment setup completed successfully."
+        Set-Location -Path (Join-Path -Path $projectRoot2 -ChildPath "dev-ops")
+        Start-Process powershell -ArgumentList "yarn run dma:build" -NoNewWindow -Wait
+        Start-Process powershell -ArgumentList "yarn run docker:build:cds" -NoNewWindow -Wait
+        Start-Process powershell -ArgumentList "yarn run docker:build:dma" -NoNewWindow -Wait
+        
+        Set-Location -Path $projectRoot2
+        Start-Process powershell -ArgumentList "docker network create web" -NoNewWindow -Wait
+        Start-Process powershell -ArgumentList "yarn dev:backend:start" -NoNewWindow -Wait
+
+        Start-Sleep -Seconds 10  # Wait for the backend container to start
+
+        # Run migrations inside the backend container
+        Start-Process powershell -ArgumentList "docker exec dma-backend-dev php yii migrate-kernel --interactive=0" -NoNewWindow -Wait
+        Start-Process powershell -ArgumentList "docker exec dma-backend-dev php yii migrate-app --interactive=0" -NoNewWindow -Wait
+
+        Set-Location -Path $uiPath
+        Start-Process powershell -ArgumentList "yarn dev:ui:install" -NoNewWindow -Wait
+        Start-Process powershell -ArgumentList "yarn dev:ui:start" -NoNewWindow -Wait
+
+        Write-Host "DMA environment setup completed successfully. Open http://localhost:8080/ to access the application."
     } catch {
         Write-Host "Error setting environment variables: $_"
         Pause
