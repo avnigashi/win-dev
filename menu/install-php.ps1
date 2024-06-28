@@ -1,38 +1,6 @@
 # Set script to stop on any error
 $ErrorActionPreference = "Stop"
 
-function Show-ProgressBar {
-    param (
-        [string]$message,
-        [int]$delaySeconds = 10
-    )
-    $progress = 0
-    $increment = 100 / $delaySeconds
-    Write-Host $message
-    for ($i = 0; $i -lt $delaySeconds; $i++) {
-        Write-Progress -Activity $message -PercentComplete $progress
-        Start-Sleep -Seconds 1
-        $progress += $increment
-    }
-    Write-Progress -Activity $message -Completed
-}
-
-function Show-LoadingAnimation {
-    param (
-        [string]$message,
-        [int]$durationSeconds = 10
-    )
-    $animation = ("|", "/", "-", "\")
-    $i = 0
-    $end = [DateTime]::Now.AddSeconds($durationSeconds)
-    while ([DateTime]::Now -lt $end) {
-        Write-Host -NoNewline "`r$message $($animation[$i % $animation.Length])"
-        Start-Sleep -Milliseconds 200
-        $i++
-    }
-    Write-Host "`r$message done."
-}
-
 function Add-ToPath {
     param (
         [string]$newPath

@@ -41,6 +41,10 @@
             "url": "https://raw.githubusercontent.com/avnigashi/win-dev/main/menu/software-status.ps1"
         },
         {
+            "name": "Extras",
+            "url": "https://raw.githubusercontent.com/avnigashi/win-dev/main/menu/extras.ps1"
+        },
+        {
             "name": "Exit",
             "url": ""
         }
