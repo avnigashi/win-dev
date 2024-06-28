@@ -106,7 +106,7 @@ function Enable-PHPExtensions {
     # Set the extension directory
     $extensionDir = "$installPath\ext"
     $iniContent = Get-Content -Path $iniPath
-    $iniContent = $iniContent -replace ";\s*extension_dir\s*=\s*\"ext\"", "extension_dir = `"$extensionDir`""
+    $iniContent = $iniContent -replace ";\s*extension_dir\s*=\s*\""ext\""", "extension_dir = `"$extensionDir`""
 
     $extensions = @(
         "extension=curl",
