@@ -1,3 +1,6 @@
+# Set script to stop on any error
+$ErrorActionPreference = "Stop"
+
 function SF-Klonen {
     $repoUrl = "https://github.com/healexsystems/cds"
     $targetDir = Read-Host "Enter the target directory (leave blank to use the current directory)"
@@ -7,7 +10,6 @@ function SF-Klonen {
     }
 
     Write-Host "Cloning repository from $repoUrl into $targetDir..."
-    Show-LoadingAnimation -message "Cloning repository" -durationSeconds 10
     try {
         git clone $repoUrl $targetDir
         if ($LASTEXITCODE -eq 0) {

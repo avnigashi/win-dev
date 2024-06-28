@@ -1,3 +1,6 @@
+# Set script to stop on any error
+$ErrorActionPreference = "Stop"
+
 function DMA-Klonen {
     $repoUrl = "https://github.com/healexsystems/cds"
     $branchName = "asz/dma-latest"

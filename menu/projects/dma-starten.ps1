@@ -1,3 +1,6 @@
+# Set script to stop on any error
+$ErrorActionPreference = "Stop"
+
 function DMA-Starten {
     param (
         [string]$projectRoot

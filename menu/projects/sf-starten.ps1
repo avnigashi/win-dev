@@ -1,3 +1,6 @@
+# Set script to stop on any error
+$ErrorActionPreference = "Stop"
+
 function SF-Starten {
     param (
         [string]$projectRoot
