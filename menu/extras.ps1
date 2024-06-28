@@ -56,7 +56,6 @@ function Setup-SSHForGit {
         Write-Host "7. Paste your key into the 'Key' field."
         Write-Host "8. Click Add SSH key."
         Write-Host ""
-        Write-Host "Your public key:"
         Write-Host $publicKey
     } catch {
         Write-Host "Failed to set up SSH for Git. Error: $_"
