@@ -45,7 +45,7 @@ function Setup-SSHForGit {
         # Display instructions for adding the SSH key to GitHub
         Write-Host ""
         Write-Host "Please follow these steps to add your SSH key to your GitHub account:"
-        Write-Host "1. Copy the SSH key to your clipboard:"
+        Write-Host "1. Copy the SSH key to your clipboard by running the following command:"
         Write-Host "   Get-Content $keyPath.pub | clip"
         Write-Host "2. Go to GitHub and log in."
         Write-Host "3. In the upper-right corner of any page, click your profile photo, then click Settings."
