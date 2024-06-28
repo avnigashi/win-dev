@@ -123,8 +123,57 @@ function Install-PHP {
     }
 }
 
+function Enable-PHPExtensions {
+    param (
+        [string]$installPath
+    )
+    $iniPath = "$installPath\php.ini"
+    if (-Not (Test-Path $iniPath)) {
+        Write-Host "php.ini not found at $installPath. Aborting."
+        return
+    }
+
+    # Set the extension directory
+    $extensionDir = "$installPath\ext"
+    $iniContent = Get-Content -Path $iniPath
+    $iniContent = $iniContent -replace ";\s*extension_dir\s*=\s*\"ext\"", "extension_dir = `"$extensionDir`""
+
+    $extensions = @(
+        "extension=curl",
+        "extension=gd",
+        "extension=mbstring",
+        "extension=mysqli",
+        "extension=openssl",
+        "extension=pdo_mysql",
+        "extension=xml",
+        "extension=zip"
+    )
+
+    foreach ($extension in $extensions) {
+        $iniContent = $iniContent -replace ";\s*$extension", "$extension"
+        if ($iniContent -notmatch [regex]::Escape($extension)) {
+            $iniContent += "`n$extension"
+        }
+    }
+    Set-Content -Path $iniPath -Value $iniContent
+    Write-Host "Enabled common PHP extensions in php.ini."
+}
+
+function InstallPluginsOnly {
+    $phpPath = Get-Command "php" | Select-Object -ExpandProperty Source
+    if ($phpPath) {
+        $phpPath = Split-Path $phpPath
+        Write-Host "PHP installation found at: $phpPath"
+        Enable-PHPExtensions -installPath $phpPath
+    } else {
+        Write-Host "PHP is not installed or not found in the system PATH."
+    }
+}
+
 Show-PHPVersions
-$phpChoice = Read-Host "Enter your choice or 'menu' to return to the main menu"
-if ($phpChoice -ne 'menu' -and $phpVersions.ContainsKey($phpChoice)) {
+$phpChoice = Read-Host "Enter your choice (install php/version or 'menu' to return to the main menu, or 'plugins' to install only plugins)"
+if ($phpChoice -eq 'plugins') {
+    InstallPluginsOnly
+} elseif ($phpChoice -ne 'menu' -and $phpVersions.ContainsKey($phpChoice)) {
     Install-PHP -phpVersion $phpChoice -phpUrl $phpVersions[$phpChoice]
 }
