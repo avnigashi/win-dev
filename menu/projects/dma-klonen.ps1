@@ -15,6 +15,8 @@ function DMA-Klonen {
         git clone --branch $branchName $repoUrl $targetDir
         if ($LASTEXITCODE -eq 0) {
             Write-Host "Repository cloned successfully into $targetDir."
+            Set-Location -Path $targetDir
+            Write-Host "Changed directory to $targetDir."
         } else {
             Write-Host "Failed to clone the repository."
         }
