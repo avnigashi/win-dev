@@ -86,9 +86,41 @@ function Install-PHP {
     $installedVersion = Get-CommandVersion -command "php" -versionArg "-v"
     if ($installedVersion -and $installedVersion -match $phpVersion) {
         Write-Host "PHP $phpVersion has been installed successfully."
+        Enable-PHPExtensions -installPath $installPath
     } else {
         Write-Host "Failed to install PHP $phpVersion."
     }
+}
+
+function Enable-PHPExtensions {
+    param (
+        [string]$installPath
+    )
+    $iniPath = "$installPath\php.ini"
+    if (-Not (Test-Path $iniPath)) {
+        Write-Host "php.ini not found at $installPath. Aborting."
+        return
+    }
+
+    $extensions = @(
+        "extension=curl",
+        "extension=gd",
+        "extension=mbstring",
+        "extension=mysqli",
+        "extension=openssl",
+        "extension=pdo_mysql",
+        "extension=xml"
+    )
+
+    $iniContent = Get-Content -Path $iniPath
+    foreach ($extension in $extensions) {
+        $iniContent = $iniContent -replace ";\s*$extension", "$extension"
+        if ($iniContent -notmatch [regex]::Escape($extension)) {
+            Add-Content -Path $iniPath -Value "`n$extension"
+        }
+    }
+    Set-Content -Path $iniPath -Value $iniContent
+    Write-Host "Enabled common PHP extensions in php.ini."
 }
 
 Show-PHPVersions
