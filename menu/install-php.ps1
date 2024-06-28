@@ -161,9 +161,8 @@ function Enable-PHPExtensions {
 }
 
 function InstallPluginsOnly {
-    $phpPath = Get-Command "php" | Select-Object -ExpandProperty Source
+    $phpPath = "C:\Program Files\PHP\php-8.3.8"
     if ($phpPath) {
-        $phpPath = Split-Path $phpPath
         Write-Host "PHP installation found at: $phpPath"
         Enable-PHPExtensions -installPath $phpPath
     } else {
