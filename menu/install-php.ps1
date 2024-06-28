@@ -77,6 +77,7 @@ function Install-PHP {
         Expand-Archive -Path $zipPath -DestinationPath $installPath -Force
         Remove-Item $zipPath
         Add-ToPath -newPath "$installPath"
+        Copy-Item -Path "$installPath\php.ini-development" -Destination "$installPath\php.ini"
         Write-Host "PHP $phpVersion installation completed successfully!"
     } catch {
         Write-Host "Failed to extract PHP zip file. Error: $_"
