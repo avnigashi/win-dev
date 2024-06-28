@@ -8,7 +8,6 @@ function DMA-Klonen {
     }
 
     Write-Host "Cloning repository from $repoUrl into $targetDir..."
-    Show-LoadingAnimation -message "Cloning repository" -durationSeconds 10
     try {
         git clone --branch $branchName $repoUrl $targetDir
         if ($LASTEXITCODE -eq 0) {
