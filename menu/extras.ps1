@@ -42,11 +42,12 @@ function Setup-SSHForGit {
         
         Write-Host "SSH key generated."
 
-        # Display instructions for adding the SSH key to GitHub
+        # Display the SSH public key for the user to copy
+        $publicKey = Get-Content "$keyPath.pub"
         Write-Host ""
         Write-Host "Please follow these steps to add your SSH key to your GitHub account:"
-        Write-Host "1. Copy the SSH key to your clipboard by running the following command:"
-        Write-Host "   Get-Content $keyPath.pub | clip"
+        Write-Host "1. Copy the SSH key below to your clipboard:"
+        Write-Host "   $publicKey"
         Write-Host "2. Go to GitHub and log in."
         Write-Host "3. In the upper-right corner of any page, click your profile photo, then click Settings."
         Write-Host "4. In the user settings sidebar, click SSH and GPG keys."
@@ -56,7 +57,7 @@ function Setup-SSHForGit {
         Write-Host "8. Click Add SSH key."
         Write-Host ""
         Write-Host "Your public key:"
-        Get-Content $keyPath.pub
+        Write-Host $publicKey
     } catch {
         Write-Host "Failed to set up SSH for Git. Error: $_"
     }
