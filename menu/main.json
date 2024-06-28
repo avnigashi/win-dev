@@ -1,0 +1,48 @@
+{
+    "menu": [
+        {
+            "name": "Install PHP",
+            "url": "https://raw.githubusercontent.com/avnigashi/win-dev/main/menu/install-php.ps1"
+        },
+        {
+            "name": "Install Composer",
+            "url": "https://raw.githubusercontent.com/avnigashi/win-dev/main/menu/install-composer.ps1"
+        },
+        {
+            "name": "Install Node.js via nvm",
+            "url": "https://raw.githubusercontent.com/avnigashi/win-dev/main/menu/install-nvm-node.ps1"
+        },
+        {
+            "name": "Install npm",
+            "url": "https://raw.githubusercontent.com/avnigashi/win-dev/main/menu/install-npm.ps1"
+        },
+        {
+            "name": "Install pnpm",
+            "url": "https://raw.githubusercontent.com/avnigashi/win-dev/main/menu/install-pnpm.ps1"
+        },
+        {
+            "name": "Install Yarn",
+            "url": "https://raw.githubusercontent.com/avnigashi/win-dev/main/menu/install-yarn.ps1"
+        },
+        {
+            "name": "Install Git",
+            "url": "https://raw.githubusercontent.com/avnigashi/win-dev/main/menu/install-git.ps1"
+        },
+        {
+            "name": "Install Docker",
+            "url": "https://raw.githubusercontent.com/avnigashi/win-dev/main/menu/install-docker.ps1"
+        },
+        {
+            "name": "Projekt Aufsetzen",
+            "url": "https://raw.githubusercontent.com/avnigashi/win-dev/main/menu/projekt-aufsetzen.ps1"
+        },
+        {
+            "name": "Software Status",
+            "url": "https://raw.githubusercontent.com/avnigashi/win-dev/main/menu/software-status.ps1"
+        },
+        {
+            "name": "Exit",
+            "url": ""
+        }
+    ]
+}
