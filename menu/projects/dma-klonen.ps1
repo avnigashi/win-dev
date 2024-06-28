@@ -1,5 +1,5 @@
 function DMA-Klonen {
-    $repoUrl = "git@github.com:healexsystems/cds.git"
+    $repoUrl = "https://github.com/healexsystems/cds"
     $branchName = "asz/dma-latest"
     $targetDir = Read-Host "Enter the target directory (leave blank to use the current directory)"
     
