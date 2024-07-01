@@ -1,5 +1,22 @@
-# Set script to stop on any error
-$ErrorActionPreference = "Stop"
+Add-Type -AssemblyName System.Windows.Forms
+
+function Select-FolderDialog {
+    param (
+        [string]$description = "Select a folder"
+    )
+
+    $folderBrowser = New-Object System.Windows.Forms.FolderBrowserDialog
+    $folderBrowser.Description = $description
+    $folderBrowser.ShowNewFolderButton = $true
+
+    $result = $folderBrowser.ShowDialog()
+
+    if ($result -eq [System.Windows.Forms.DialogResult]::OK) {
+        return $folderBrowser.SelectedPath
+    } else {
+        return $null
+    }
+}
 
 function DMA-Starten {
     param (
@@ -10,9 +27,6 @@ function DMA-Starten {
     $uiPath = Join-Path -Path $projectRoot -ChildPath "apps/dma-ukk/ui"
 
     try {
-        # Open the project root directory in GUI
-        Start-Process explorer.exe -ArgumentList $projectRoot
-
         Set-Location -Path $backendPath
 
         docker network create web
@@ -47,8 +61,9 @@ function DMA-Starten {
     }
 }
 
-$projectRoot = Read-Host "Enter the project root path (leave blank to use the current directory)"
+$projectRoot = Select-FolderDialog -description "Select the project root folder"
 if (-not $projectRoot) {
-    $projectRoot = Get-Location
+    Write-Host "No folder selected. Exiting script."
+    exit
 }
 DMA-Starten -projectRoot $projectRoot
