@@ -1,6 +1,3 @@
-# Set script to stop on any error
-$ErrorActionPreference = "Stop"
-
 function DMA-Einrichten {
     param (
         [string]$projectRoot
@@ -25,16 +22,15 @@ function DMA-Einrichten {
         Copy-Item -Path $envDevFilePath -Destination $envBaseFilePath
 
         Set-Location -Path $projectRoot2
-            Set-Location -Path $projectRoot2
         Start-Process powershell -ArgumentList "yarn run dev:backend:start"
-        Write-Host " Wait for the backend container to start"
+        Write-Host "Wait for the backend container to start"
 
         Start-Sleep -Seconds 20  # Wait for the backend container to start
 
-          Start-Process powershell -ArgumentList "docker exec dma-backend-dev composer install" -NoNewWindow -Wait
+        Start-Process powershell -ArgumentList "docker exec dma-backend-dev composer install" -NoNewWindow -Wait
         Start-Process powershell -ArgumentList "docker exec dma-backend-dev php yii migrate-kernel --interactive=0" -NoNewWindow -Wait
         Start-Process powershell -ArgumentList "docker exec dma-backend-dev php yii migrate-app --interactive=0" -NoNewWindow -Wait
-            Start-Process powershell -ArgumentList "yarn run dev:backend:stop"
+        Start-Process powershell -ArgumentList "yarn run dev:backend:stop"
         Start-Process powershell -ArgumentList "yarn install" -NoNewWindow -Wait
 
         Set-Location -Path $uiPath
@@ -42,17 +38,15 @@ function DMA-Einrichten {
 
         Set-Location -Path (Join-Path -Path $projectRoot2 -ChildPath "dev-ops")
         Start-Process powershell -ArgumentList "yarn run dma:build" -NoNewWindow -Wait
-        Start-Process powershell -ArgumentList "yarn run docker:build:cds" 
+        Start-Process powershell -ArgumentList "yarn run docker:build:cds"
         Start-Process powershell -ArgumentList "yarn run docker:build:dma" 
         
         Set-Location -Path $projectRoot2
         Start-Process powershell -ArgumentList "docker network create web" -NoNewWindow -Wait
 
-
         Set-Location -Path $uiPath
         Start-Process powershell -ArgumentList "yarn dev:ui:install" -NoNewWindow -Wait
         Start-Process powershell -ArgumentList "yarn dev:ui:start" -NoNewWindow -Wait
-        # Start the backend in a new PowerShell process
       
         Write-Host "DMA environment setup completed successfully. Open http://localhost:8080/ to access the application."
         Set-Location -Path $projectRoot
@@ -61,9 +55,9 @@ function DMA-Einrichten {
         Pause
     }
 }
-
-$projectRoot = Read-Host "Enter the project root path (leave blank to use the current directory)"
+$projectRoot = Select-FolderDialog -description "Select the project root folder"
 if (-not $projectRoot) {
-    $projectRoot = Get-Location
+    Write-Host "No folder selected. Exiting script."
+    exit
 }
 DMA-Einrichten -projectRoot $projectRoot
