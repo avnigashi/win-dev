@@ -1,3 +1,26 @@
+Add-Type -AssemblyName System.Windows.Forms
+
+function Select-FolderDialog {
+    param (
+        [string]$description = "Select a folder"
+    )
+
+    $folderBrowser = New-Object System.Windows.Forms.FolderBrowserDialog
+    $folderBrowser.Description = $description
+    $folderBrowser.ShowNewFolderButton = $true
+
+    $result = $folderBrowser.ShowDialog()
+
+    if ($result -eq [System.Windows.Forms.DialogResult]::OK) {
+        return $folderBrowser.SelectedPath
+    } else {
+        return $null
+    }
+}
+
+# Set script to stop on any error
+$ErrorActionPreference = "Stop"
+
 function DMA-Einrichten {
     param (
         [string]$projectRoot
@@ -39,7 +62,7 @@ function DMA-Einrichten {
         Set-Location -Path (Join-Path -Path $projectRoot2 -ChildPath "dev-ops")
         Start-Process powershell -ArgumentList "yarn run dma:build" -NoNewWindow -Wait
         Start-Process powershell -ArgumentList "yarn run docker:build:cds"
-        Start-Process powershell -ArgumentList "yarn run docker:build:dma" 
+        Start-Process powershell -ArgumentList "yarn run docker:build:dma"
         
         Set-Location -Path $projectRoot2
         Start-Process powershell -ArgumentList "docker network create web" -NoNewWindow -Wait
@@ -55,6 +78,7 @@ function DMA-Einrichten {
         Pause
     }
 }
+
 $projectRoot = Select-FolderDialog -description "Select the project root folder"
 if (-not $projectRoot) {
     Write-Host "No folder selected. Exiting script."
