@@ -45,6 +45,10 @@
             "url": "https://raw.githubusercontent.com/avnigashi/win-dev/main/menu/extras.ps1"
         },
         {
+            "name": "Install Python",
+            "url": "https://raw.githubusercontent.com/avnigashi/win-dev/main/menu/install-python.ps1"
+        },
+        {
             "name": "Exit",
             "url": ""
         }
