@@ -36,28 +36,34 @@ function Setup-SSHForGit {
     try {
         $email = Read-Host "Enter your email address for the SSH key"
         $keyPath = "$env:USERPROFILE\.ssh\id_rsa"
-
-        # Generate a new SSH key
-        ssh-keygen -t rsa -b 4096 -C $email -f $keyPath -N ""
         
-        Write-Host "SSH key generated."
-
-        # Display the SSH public key for the user to copy
-        $publicKey = Get-Content "$keyPath.pub"
-        Write-Host ""
-        Write-Host "Please follow these steps to add your SSH key to your GitHub account:"
-        Write-Host "1. Copy the SSH key below to your clipboard:"
-        Write-Host "   $publicKey"
-        Write-Host "2. Go to GitHub and log in."
-        Write-Host "3. In the upper-right corner of any page, click your profile photo, then click Settings."
-        Write-Host "4. In the user settings sidebar, click SSH and GPG keys."
-        Write-Host "5. Click New SSH key."
-        Write-Host "6. In the 'Title' field, add a descriptive label for the new key."
-        Write-Host "7. Paste your key into the 'Key' field."
-        Write-Host "8. Click Add SSH key."
-        Write-Host ""
-        Write-Host "Your public key:"
-        Write-Host $publicKey
+        # Ensure .ssh directory exists
+        New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.ssh" | Out-Null
+        
+        # Generate a new SSH key
+        & ssh-keygen.exe -t rsa -b 4096 -C $email -f $keyPath -N '""'
+        
+        if (Test-Path "$keyPath.pub") {
+            Write-Host "SSH key generated successfully."
+            # Display the SSH public key for the user to copy
+            $publicKey = Get-Content "$keyPath.pub"
+            Write-Host ""
+            Write-Host "Please follow these steps to add your SSH key to your GitHub account:"
+            Write-Host "1. Copy the SSH key below to your clipboard:"
+            Write-Host "   $publicKey"
+            Write-Host "2. Go to GitHub and log in."
+            Write-Host "3. In the upper-right corner of any page, click your profile photo, then click Settings."
+            Write-Host "4. In the user settings sidebar, click SSH and GPG keys."
+            Write-Host "5. Click New SSH key."
+            Write-Host "6. In the 'Title' field, add a descriptive label for the new key."
+            Write-Host "7. Paste your key into the 'Key' field."
+            Write-Host "8. Click Add SSH key."
+            Write-Host ""
+            Write-Host "Your public key:"
+            Write-Host $publicKey
+        } else {
+            throw "SSH key file was not created."
+        }
     } catch {
         Write-Host "Failed to set up SSH for Git. Error: $_"
     }
