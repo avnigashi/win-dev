@@ -46,7 +46,7 @@ function DMA-Starten {
         # Change directory to UI path and start the UI
         Set-Location -Path $uiPath
         yarn install
-        yarn dev &  # Run in the background
+        yarn dev   # Run in the background
 
         Write-Host "Open the application at http://localhost:8080/"
         Set-Location -Path $projectRoot
