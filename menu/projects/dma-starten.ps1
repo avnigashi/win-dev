@@ -32,21 +32,21 @@ function DMA-Starten {
 
         docker network create web
 
-        # Start the backend container in detached mode
-        docker-compose up -d
+       
+        # Start the backend in a new PowerShell process
+        Start-Process powershell -ArgumentList "yarn run dev:backend:start"
         Write-Host "Wait for the backend container to start"
 
         Start-Sleep -Seconds 20  # Wait for the backend container to start
 
-        # Execute commands in the backend container
-        docker exec dma-backend-dev composer install
-        docker exec dma-backend-dev php yii migrate-kernel --interactive=0
-        docker exec dma-backend-dev php yii migrate-app --interactive=0
+        Start-Process powershell -ArgumentList "docker exec dma-backend-dev composer install" -NoNewWindow -Wait
+        Start-Process powershell -ArgumentList "docker exec dma-backend-dev php yii migrate-kernel --interactive=0" -NoNewWindow -Wait
+        Start-Process powershell -ArgumentList "docker exec dma-backend-dev php yii migrate-app --interactive=0" -NoNewWindow -Wait
 
         # Change directory to UI path and start the UI
         Set-Location -Path $uiPath
-        yarn install
-        yarn dev   # Run in the background
+        Start-Process powershell -ArgumentList "yarn install"
+        Start-Process powershell -ArgumentList "yarn dev"
 
         Write-Host "Open the application at http://localhost:8080/"
         Set-Location -Path $projectRoot
